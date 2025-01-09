@@ -1,4 +1,4 @@
-module github.com/behavorial-ai/caseofficer
+module github.com/behavioral-ai/caseofficer
 
 go 1.21.4
 
