@@ -1,0 +1,10 @@
+github.com/behavioral-ai/core v0.0.0-20241214190801-d0ebcdad56b2 h1:GRByssHNSWz7Adxkztm4SN8sXRMNLLbw7OMqIRRupP0=
+github.com/behavioral-ai/core v0.0.0-20241214190801-d0ebcdad56b2/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/domain v0.0.0-20250109204440-6602a58460fe h1:JFfmu4cOnD2Se45rka5YsgWxy/vE+OfMTQgd2wEoBUI=
+github.com/behavioral-ai/domain v0.0.0-20250109204440-6602a58460fe/go.mod h1:qAY2wrFieJBBHpXFilmfnj8/0yoysj60izwNRZ4ggDU=
+github.com/behavioral-ai/ingress v0.0.0-20250109211108-7e644cc58fe5 h1:NPKOpyBTSExPdiAS2pRV7Sa5YI3krBkaT+F/TrPhoqA=
+github.com/behavioral-ai/ingress v0.0.0-20250109211108-7e644cc58fe5/go.mod h1:jDU1+r1gjmhYIgpQib1EWkoXQD3k20+qRmVJ+wNGtT4=
+github.com/behavioral-ai/log v0.0.0-20241219134722-0518e842e5bb h1:URNfG4KI64o7mvOVX10HLAwlOe3qBgqS0f4s5k2eAos=
+github.com/behavioral-ai/log v0.0.0-20241219134722-0518e842e5bb/go.mod h1:bX5HX19BLR7iv4IxgjUerrSBi5ozdRk6ia8RXvxNjXA=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
