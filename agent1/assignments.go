@@ -1,12 +1,12 @@
-package operative1
+package agent1
 
 import (
 	"errors"
 	"github.com/behavioral-ai/core/core"
-	"github.com/behavioral-ai/domain/guidance"
+	"github.com/behavioral-ai/guidance/common"
 )
 
-func createAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
+func createAssignments(agent *caseOfficer, assignments *common.Assignments, newAgent createAgent) {
 	if newAgent == nil {
 		agent.Notify(core.NewStatusError(core.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
 		return
@@ -20,7 +20,7 @@ func createAssignments(agent *caseOfficer, assignments *guidance.Assignments, ne
 	}
 }
 
-func updateAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
+func updateAssignments(agent *caseOfficer, assignments *common.Assignments, newAgent createAgent) {
 	if newAgent == nil {
 		agent.Notify(core.NewStatusError(core.StatusInvalidArgument, errors.New("error: update assignments newAgent is nil")))
 		return
@@ -34,7 +34,7 @@ func updateAssignments(agent *caseOfficer, assignments *guidance.Assignments, ne
 	}
 }
 
-func addAssignments(agent *caseOfficer, entry []guidance.HostEntry, newAgent createAgent) {
+func addAssignments(agent *caseOfficer, entry []common.HostEntry, newAgent createAgent) {
 	for _, e := range entry {
 		a := newAgent(e.Origin, agent, agent.global)
 		err := agent.serviceAgents.Register(a)

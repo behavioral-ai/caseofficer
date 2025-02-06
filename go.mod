@@ -4,11 +4,8 @@ go 1.21.4
 
 require (
 	github.com/behavioral-ai/core v0.0.0-20241214190801-d0ebcdad56b2
-	github.com/behavioral-ai/domain v0.0.0-20250109204440-6602a58460fe
-	github.com/behavioral-ai/ingress v0.0.0-20250109211108-7e644cc58fe5
+	github.com/behavioral-ai/guidance v0.0.0-20250206201739-0937781368fc
+	github.com/behavioral-ai/operative v0.0.0-20250206202303-e2035c31f357
 )
 
-require (
-	github.com/behavioral-ai/log v0.0.0-20241219134722-0518e842e5bb // indirect
-	github.com/google/uuid v1.6.0 // indirect
-)
+require github.com/google/uuid v1.6.0 // indirect

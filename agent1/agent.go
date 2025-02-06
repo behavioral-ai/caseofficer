@@ -1,10 +1,9 @@
-package operative1
+package agent1
 
 import (
 	"github.com/behavioral-ai/core/core"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/domain/guidance"
-	"github.com/behavioral-ai/ingress/operative1"
+	"github.com/behavioral-ai/guidance/common"
 	"time"
 )
 
@@ -77,7 +76,7 @@ func (c *caseOfficer) Run() {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, guidance.Assign, operative1.NewAgent, nil)
+	go emissaryAttend(c, common.Assign, nil, nil)
 }
 
 // Shutdown - shutdown the agent
