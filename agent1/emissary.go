@@ -1,12 +1,12 @@
 package agent1
 
 import (
-	"github.com/behavioral-ai/core/core"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/guidance/common"
+	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/domain/guidance"
 )
 
-type createAgent func(origin core.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.Agent
+type createAgent func(origin common.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.Agent
 
 /*
 func newFeedbackAgent(origin core.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.Agent {
@@ -18,7 +18,7 @@ func newFeedbackAgent(origin core.Origin, handler messaging.OpsAgent, global mes
 //type newServiceAgent func(origin core.Origin, handler messaging.OpsAgent, dispatcher messaging.Dispatcher) messaging.Agent
 //type newFeedbackAgent func(origin core.Origin, handler messaging.OpsAgent, dispatcher messaging.Dispatcher) messaging.Agent
 
-func emissaryAttend(agent *caseOfficer, assignments *common.Assignments, newService createAgent, newFeedback createAgent) {
+func emissaryAttend(agent *caseOfficer, assignments *guidance.Assignments, newService createAgent, newFeedback createAgent) {
 	paused := false
 	createAssignments(agent, assignments, newService)
 	addFeedback(agent, newFeedback)
@@ -47,7 +47,7 @@ func emissaryAttend(agent *caseOfficer, assignments *common.Assignments, newServ
 				agent.dispatch(msg.Event())
 				return
 			case messaging.DataChangeEvent:
-				if msg.IsContentType(common.ContentTypeCalendar) {
+				if msg.IsContentType(guidance.ContentTypeCalendar) {
 					agent.serviceAgents.Broadcast(msg)
 				}
 			default:

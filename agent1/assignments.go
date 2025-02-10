@@ -2,13 +2,13 @@ package agent1
 
 import (
 	"errors"
-	"github.com/behavioral-ai/core/core"
-	"github.com/behavioral-ai/guidance/common"
+	"github.com/behavioral-ai/core/aspect"
+	"github.com/behavioral-ai/domain/guidance"
 )
 
-func createAssignments(agent *caseOfficer, assignments *common.Assignments, newAgent createAgent) {
+func createAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(core.NewStatusError(core.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
+		agent.Notify(aspect.NewStatusError(aspect.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
 		return
 	}
 	entry, status := assignments.All(agent.handler, agent.origin)
@@ -20,9 +20,9 @@ func createAssignments(agent *caseOfficer, assignments *common.Assignments, newA
 	}
 }
 
-func updateAssignments(agent *caseOfficer, assignments *common.Assignments, newAgent createAgent) {
+func updateAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(core.NewStatusError(core.StatusInvalidArgument, errors.New("error: update assignments newAgent is nil")))
+		agent.Notify(aspect.NewStatusError(aspect.StatusInvalidArgument, errors.New("error: update assignments newAgent is nil")))
 		return
 	}
 	entry, status := assignments.New(agent.handler, agent.origin)
@@ -34,12 +34,12 @@ func updateAssignments(agent *caseOfficer, assignments *common.Assignments, newA
 	}
 }
 
-func addAssignments(agent *caseOfficer, entry []common.HostEntry, newAgent createAgent) {
+func addAssignments(agent *caseOfficer, entry []guidance.HostEntry, newAgent createAgent) {
 	for _, e := range entry {
 		a := newAgent(e.Origin, agent, agent.global)
 		err := agent.serviceAgents.Register(a)
 		if err != nil {
-			agent.Notify(core.NewStatusError(core.StatusInvalidArgument, err))
+			agent.Notify(aspect.NewStatusError(aspect.StatusInvalidArgument, err))
 		} else {
 			a.Run()
 		}

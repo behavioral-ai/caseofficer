@@ -1,9 +1,10 @@
 package agent1
 
 import (
-	"github.com/behavioral-ai/core/core"
+	"github.com/behavioral-ai/core/aspect"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/guidance/common"
+	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/domain/guidance"
 	"time"
 )
 
@@ -15,7 +16,7 @@ const (
 type caseOfficer struct {
 	running bool
 	agentId string
-	origin  core.Origin
+	origin  common.Origin
 
 	ticker        *messaging.Ticker
 	emissary      *messaging.Channel
@@ -25,17 +26,17 @@ type caseOfficer struct {
 	local         dispatcher
 }
 
-func AgentUri(origin core.Origin) string {
+func AgentUri(origin common.Origin) string {
 	return origin.Uri(Class)
 }
 
 // NewAgent - create a new case officer agent
-func NewAgent(origin core.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.OpsAgent {
+func NewAgent(origin common.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.OpsAgent {
 	return newAgent(origin, handler, global, newDispatcher(false))
 }
 
 // newAgent - create a new case officer agent
-func newAgent(origin core.Origin, handler messaging.OpsAgent, global messaging.Dispatcher, local dispatcher) *caseOfficer {
+func newAgent(origin common.Origin, handler messaging.OpsAgent, global messaging.Dispatcher, local dispatcher) *caseOfficer {
 	c := new(caseOfficer)
 	c.agentId = AgentUri(origin)
 	c.origin = origin
@@ -63,7 +64,7 @@ func (c *caseOfficer) Message(m *messaging.Message) {
 }
 
 // Notify - notifier
-func (c *caseOfficer) Notify(status *core.Status) *core.Status { return c.handler.Notify(status) }
+func (c *caseOfficer) Notify(status *aspect.Status) *aspect.Status { return c.handler.Notify(status) }
 
 // Trace - activity tracing
 func (c *caseOfficer) Trace(agent messaging.Agent, channel, event, activity string) {
@@ -76,7 +77,7 @@ func (c *caseOfficer) Run() {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, common.Assign, nil, nil)
+	go emissaryAttend(c, guidance.Assign, nil, nil)
 }
 
 // Shutdown - shutdown the agent
