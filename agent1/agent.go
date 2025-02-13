@@ -1,7 +1,6 @@
 package agent1
 
 import (
-	"github.com/behavioral-ai/core/aspect"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/guidance"
@@ -64,7 +63,7 @@ func (c *caseOfficer) Message(m *messaging.Message) {
 }
 
 // Notify - notifier
-func (c *caseOfficer) Notify(status *aspect.Status) *aspect.Status { return c.handler.Notify(status) }
+func (c *caseOfficer) Notify(status error) { c.handler.Notify(status) }
 
 // Trace - activity tracing
 func (c *caseOfficer) Trace(agent messaging.Agent, channel, event, activity string) {

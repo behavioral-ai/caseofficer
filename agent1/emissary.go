@@ -47,11 +47,11 @@ func emissaryAttend(agent *caseOfficer, assignments *guidance.Assignments, newSe
 				agent.dispatch(msg.Event())
 				return
 			case messaging.DataChangeEvent:
-				if msg.IsContentType(guidance.ContentTypeCalendar) {
-					agent.serviceAgents.Broadcast(msg)
-				}
+				//if msg.IsContentType(guidance.ContentTypeCalendar) {
+				//	agent.serviceAgents.Broadcast(msg)
+				//}
 			default:
-				agent.Notify(messaging.EventErrorStatus(agent.Uri(), msg))
+				agent.Notify(messaging.EventError(agent.Uri(), msg))
 			}
 			agent.dispatch(msg.Event())
 		default:

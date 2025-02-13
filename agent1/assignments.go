@@ -2,36 +2,35 @@ package agent1
 
 import (
 	"errors"
-	"github.com/behavioral-ai/core/aspect"
 	"github.com/behavioral-ai/domain/guidance"
 )
 
 func createAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(aspect.NewStatusError(aspect.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
+		agent.Notify(errors.New("error: create assignments newAgent is nil"))
 		return
 	}
 	entry, status := assignments.All(agent.handler, agent.origin)
-	if status.OK() {
+	if status == nil {
 		addAssignments(agent, entry, newAgent)
 	}
-	if !status.NotFound() {
-		agent.Notify(status)
-	}
+	//if !status.NotFound() {
+	agent.Notify(status)
+	//}
 }
 
 func updateAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(aspect.NewStatusError(aspect.StatusInvalidArgument, errors.New("error: update assignments newAgent is nil")))
+		agent.Notify(errors.New("error: update assignments newAgent is nil"))
 		return
 	}
 	entry, status := assignments.New(agent.handler, agent.origin)
-	if status.OK() {
+	if status == nil {
 		addAssignments(agent, entry, newAgent)
 	}
-	if !status.NotFound() {
-		agent.Notify(status)
-	}
+	//	if !status.NotFound() {
+	agent.Notify(status)
+	//	}
 }
 
 func addAssignments(agent *caseOfficer, entry []guidance.HostEntry, newAgent createAgent) {
@@ -39,7 +38,7 @@ func addAssignments(agent *caseOfficer, entry []guidance.HostEntry, newAgent cre
 		a := newAgent(e.Origin, agent, agent.global)
 		err := agent.serviceAgents.Register(a)
 		if err != nil {
-			agent.Notify(aspect.NewStatusError(aspect.StatusInvalidArgument, err))
+			agent.Notify(err)
 		} else {
 			a.Run()
 		}

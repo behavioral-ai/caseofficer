@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/aspect"
 	"github.com/behavioral-ai/core/host"
-	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/core/messagingx"
 	"net/http"
 	"time"
 )
@@ -17,15 +17,15 @@ func init() {
 	a.Run()
 }
 
-func messageHandler(msg *messaging.Message) {
+func messageHandler(msg *messagingx.Message) {
 	start := time.Now()
 	switch msg.Event() {
-	case messaging.StartupEvent:
+	case messagingx.StartupEvent:
 		// Any processing for a Startup event would be here
-		messaging.SendReply(msg, aspect.NewStatusDuration(http.StatusOK, time.Since(start)))
-	case messaging.ShutdownEvent:
-	case messaging.PingEvent:
+		messagingx.SendReply(msg, aspect.NewStatusDuration(http.StatusOK, time.Since(start)))
+	case messagingx.ShutdownEvent:
+	case messagingx.PingEvent:
 		// Any processing for a Shutdown/Ping event would be here
-		messaging.SendReply(msg, aspect.NewStatusDuration(http.StatusOK, time.Since(start)))
+		messagingx.SendReply(msg, aspect.NewStatusDuration(http.StatusOK, time.Since(start)))
 	}
 }
