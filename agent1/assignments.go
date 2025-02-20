@@ -2,15 +2,17 @@ package agent1
 
 import (
 	"errors"
-	"github.com/behavioral-ai/domain/guidance"
+	"github.com/behavioral-ai/caseofficer/assignment1"
+	"github.com/behavioral-ai/core/messaging"
+	"net/http"
 )
 
-func createAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
+func createAssignments(agent *caseOfficer, assignments *assignment1.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(errors.New("error: create assignments newAgent is nil"))
+		agent.Notify(messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
 		return
 	}
-	entry, status := assignments.All(agent.handler, agent.origin)
+	entry, status := assignments.All(agent.origin)
 	if status == nil {
 		addAssignments(agent, entry, newAgent)
 	}
@@ -19,13 +21,13 @@ func createAssignments(agent *caseOfficer, assignments *guidance.Assignments, ne
 	//}
 }
 
-func updateAssignments(agent *caseOfficer, assignments *guidance.Assignments, newAgent createAgent) {
+func updateAssignments(agent *caseOfficer, assignments *assignment1.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(errors.New("error: update assignments newAgent is nil"))
+		agent.Notify(messaging.NewStatusError(http.StatusBadRequest, errors.New("error: update assignments newAgent is nil")))
 		return
 	}
-	entry, status := assignments.New(agent.handler, agent.origin)
-	if status == nil {
+	entry, status := assignments.New(agent.origin)
+	if !status.OK() {
 		addAssignments(agent, entry, newAgent)
 	}
 	//	if !status.NotFound() {
@@ -33,12 +35,12 @@ func updateAssignments(agent *caseOfficer, assignments *guidance.Assignments, ne
 	//	}
 }
 
-func addAssignments(agent *caseOfficer, entry []guidance.HostEntry, newAgent createAgent) {
+func addAssignments(agent *caseOfficer, entry []assignment1.HostEntry, newAgent createAgent) {
 	for _, e := range entry {
-		a := newAgent(e.Origin, agent, agent.global)
+		a := newAgent(e.Origin, agent.notifier, agent.dispatcher)
 		err := agent.serviceAgents.Register(a)
 		if err != nil {
-			agent.Notify(err)
+			agent.Notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err))
 		} else {
 			a.Run()
 		}

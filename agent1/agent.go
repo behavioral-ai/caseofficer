@@ -1,9 +1,9 @@
 package agent1
 
 import (
+	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/domain/guidance"
 	"time"
 )
 
@@ -14,15 +14,14 @@ const (
 
 type caseOfficer struct {
 	running bool
-	agentId string
+	uri     string
 	origin  common.Origin
 
 	ticker        *messaging.Ticker
 	emissary      *messaging.Channel
 	serviceAgents *messaging.Exchange
-	handler       messaging.OpsAgent
-	global        messaging.Dispatcher
-	local         dispatcher
+	notifier      messaging.NotifyFunc
+	dispatcher    messaging.Dispatcher
 }
 
 func AgentUri(origin common.Origin) string {
@@ -30,21 +29,21 @@ func AgentUri(origin common.Origin) string {
 }
 
 // NewAgent - create a new case officer agent
-func NewAgent(origin common.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.OpsAgent {
-	return newAgent(origin, handler, global, newDispatcher(false))
+func NewAgent(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent {
+	return newAgent(origin, notifier, dispatcher)
 }
 
 // newAgent - create a new case officer agent
-func newAgent(origin common.Origin, handler messaging.OpsAgent, global messaging.Dispatcher, local dispatcher) *caseOfficer {
+func newAgent(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
 	c := new(caseOfficer)
-	c.agentId = AgentUri(origin)
+	c.uri = AgentUri(origin)
 	c.origin = origin
 	c.ticker = messaging.NewPrimaryTicker(assignmentDuration)
 	c.emissary = messaging.NewEmissaryChannel(true)
-	c.handler = handler
+	c.notifier = notifier
 	c.serviceAgents = messaging.NewExchange()
-	c.local = local
-	c.global = global
+
+	c.dispatcher = dispatcher
 	return c
 }
 
@@ -52,7 +51,10 @@ func newAgent(origin common.Origin, handler messaging.OpsAgent, global messaging
 func (c *caseOfficer) String() string { return c.Uri() }
 
 // Uri - agent identifier
-func (c *caseOfficer) Uri() string { return c.agentId }
+func (c *caseOfficer) Uri() string { return c.uri }
+
+// Name - agent class
+func (c *caseOfficer) Name() string { return c.uri }
 
 // Message - message the agent
 func (c *caseOfficer) Message(m *messaging.Message) {
@@ -63,12 +65,16 @@ func (c *caseOfficer) Message(m *messaging.Message) {
 }
 
 // Notify - notifier
-func (c *caseOfficer) Notify(status error) { c.handler.Notify(status) }
+func (c *caseOfficer) Notify(status *messaging.Status) {
+	if c.notifier != nil {
+		c.notifier(status)
+	}
+}
 
 // Trace - activity tracing
-func (c *caseOfficer) Trace(agent messaging.Agent, channel, event, activity string) {
-	c.handler.Trace(agent, channel, event, activity)
-}
+//func (c *caseOfficer) Trace(agent messaging.Agent, channel, event, activity string) {
+//	c.handler.Trace(agent, channel, event, activity)
+//}
 
 // Run - run the agent
 func (c *caseOfficer) Run() {
@@ -76,7 +82,7 @@ func (c *caseOfficer) Run() {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, guidance.Assign, nil, nil)
+	go emissaryAttend(c, assignment1.Entries, nil, nil)
 }
 
 // Shutdown - shutdown the agent
@@ -108,12 +114,20 @@ func (c *caseOfficer) reviseTicker(newDuration time.Duration) {
 	c.ticker.Start(newDuration)
 }
 
-func (c *caseOfficer) setup(event string) {
-	if c.local != nil {
-		c.local.setup(c, event)
+func (c *caseOfficer) dispatch(channel any, event string) {
+	if c.dispatcher == nil || channel == nil {
+		return
+	}
+	if ch, ok := channel.(*messaging.Channel); ok {
+		c.dispatcher.Dispatch(c, ch.Name(), event)
+		return
+	}
+	if t, ok := channel.(*messaging.Ticker); ok {
+		c.dispatcher.Dispatch(c, t.Name(), event)
 	}
 }
 
+/*
 func (c *caseOfficer) dispatch(event string) {
 	if c.global != nil {
 		c.global.Dispatch(c, messaging.EmissaryChannel, event, "")
@@ -122,3 +136,15 @@ func (c *caseOfficer) dispatch(event string) {
 		c.local.dispatch(c, event)
 	}
 }
+
+*/
+
+/*
+func (c *caseOfficer) setup(event string) {
+	if c.local != nil {
+		c.local.setup(c, event)
+	}
+}
+
+
+*/

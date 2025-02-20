@@ -25,7 +25,7 @@ func newDispatcher(test bool) dispatcher {
 func (d *dispatch) setup(_ *caseOfficer, _ string) {}
 
 func (d *dispatch) trace(agent *caseOfficer, event, activity string) {
-	agent.handler.Trace(agent, d.channel, event, activity)
+	//agent.handler.Trace(agent, d.channel, event, activity)
 }
 
 func (d *dispatch) dispatch(agent *caseOfficer, event string) {
