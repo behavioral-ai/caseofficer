@@ -16,7 +16,7 @@ func newFeedbackAgent(origin core.Origin, handler messaging.OpsAgent, global mes
 //type newServiceAgent func(origin core.Origin, handler messaging.OpsAgent, dispatcher messaging.Dispatcher) messaging.Agent
 //type newFeedbackAgent func(origin core.Origin, handler messaging.OpsAgent, dispatcher messaging.Dispatcher) messaging.Agent
 
-func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, newService createAgent, newFeedback createAgent) {
+func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, newService createAgent) {
 	paused := false
 	createAssignments(agent, assignments, newService)
 	//addFeedback(agent, newFeedback)
@@ -44,9 +44,7 @@ func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, ne
 				agent.dispatch(agent.emissary, msg.Event())
 				return
 			case messaging.DataChangeEvent:
-
 			default:
-
 			}
 			agent.dispatch(agent.emissary, msg.Event())
 		default:

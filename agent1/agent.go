@@ -4,6 +4,7 @@ import (
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/operative/agent1"
 	"time"
 )
 
@@ -71,18 +72,13 @@ func (c *caseOfficer) Notify(status *messaging.Status) {
 	}
 }
 
-// Trace - activity tracing
-//func (c *caseOfficer) Trace(agent messaging.Agent, channel, event, activity string) {
-//	c.handler.Trace(agent, channel, event, activity)
-//}
-
 // Run - run the agent
 func (c *caseOfficer) Run() {
 	if c.running {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, assignment1.Entries, nil, nil)
+	go emissaryAttend(c, assignment1.Entries, agent1.New)
 }
 
 // Shutdown - shutdown the agent

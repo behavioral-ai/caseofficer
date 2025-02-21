@@ -6,25 +6,14 @@ import (
 )
 
 const (
-	PkgPath    = "github/behavioral-ai/caseofficer/assignment1"
-	WestRegion = "us-west1"
-	WestZoneA  = "w-a"
-	WestZoneB  = "w-b"
-
-	CentralRegion = "us-central1"
-	CentralZoneA  = "c-a"
-	CentralZoneB  = "c-b"
-
-	EastRegion = "us-east1"
-	EastZoneA  = "e-a"
-	EastZoneB  = "e-b"
+	PkgPath = "github/behavioral-ai/caseofficer/assignment1"
 )
 
 func GetRegion(origin common.Origin) ([]HostEntry, *messaging.Status) {
-	if origin.Region == WestRegion {
+	if origin.Region == common.WestRegion {
 		return westData, messaging.StatusOK()
 	}
-	if origin.Region == CentralRegion {
+	if origin.Region == common.CentralRegion {
 		return centralData, messaging.StatusOK()
 	}
 	return []HostEntry{}, messaging.StatusOK()
