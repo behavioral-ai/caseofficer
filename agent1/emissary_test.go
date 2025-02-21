@@ -6,7 +6,6 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/test"
 	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/domain/guidance"
 	"github.com/behavioral-ai/operative/agent1"
 	"time"
 )
@@ -19,12 +18,12 @@ var (
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	traceDispatch := messaging.NewTraceDispatcher([]string{messaging.StartupEvent, messaging.ShutdownEvent}, "")
-	agent := newAgent(common.Origin{Region: guidance.WestRegion}, test.NewAgent("agent-test").Notify, traceDispatch)
-	dataChange.SetContent(guidance.ContentTypeCalendar, guidance.NewProcessingCalendar())
+	agent := newAgent(common.Origin{Region: common.WestRegion}, test.NewAgent("agent-test").Notify, traceDispatch)
+	//dataChange.SetContent(guidance.ContentTypeCalendar, guidance.NewProcessingCalendar())
 
 	go func() {
 		go emissaryAttend(agent, assignment1.Entries, agent1.New)
-		agent.Message(dataChange)
+		//agent.Message(dataChange)
 		time.Sleep(time.Minute * 1)
 		agent.Message(shutdown)
 
