@@ -4,30 +4,31 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/test"
 	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/operative/agent1"
+	"github.com/behavioral-ai/operative/agent"
 	"time"
 )
 
 var (
-	shutdown   = messaging.NewControlMessage("", "", messaging.ShutdownEvent)
-	dataChange = messaging.NewControlMessage("", "", messaging.DataChangeEvent)
+	shutdown = messaging.NewControlMessage("", "", messaging.ShutdownEvent)
+	//dataChange = messaging.NewControlMessage("", "", messaging.DataChangeEvent)
 )
 
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	traceDispatch := messaging.NewTraceDispatcher([]string{messaging.StartupEvent, messaging.ShutdownEvent}, "")
-	agent := newAgent(common.Origin{Region: common.WestRegion}, test.NewAgent("agent-test").Notify, traceDispatch)
+	officer := newAgent(common.Origin{Region: common.WestRegion}, func(status *messaging.Status) {
+		fmt.Printf("test: Agent() -> [status:%v]\n", status)
+	}, traceDispatch)
 	//dataChange.SetContent(guidance.ContentTypeCalendar, guidance.NewProcessingCalendar())
 
 	go func() {
-		go emissaryAttend(agent, assignment1.Entries, agent1.New)
+		go emissaryAttend(officer, assignment1.Entries, agent.New)
 		//agent.Message(dataChange)
 		time.Sleep(time.Minute * 1)
-		agent.Message(shutdown)
+		officer.Message(shutdown)
 
-		fmt.Printf("test: emissaryAttend() -> [finalized:%v]\n", agent.IsFinalized())
+		fmt.Printf("test: emissaryAttend() -> [finalized:%v]\n", officer.IsFinalized())
 		ch <- struct{}{}
 	}()
 	<-ch

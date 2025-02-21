@@ -4,7 +4,7 @@ import (
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/operative/agent1"
+	"github.com/behavioral-ai/operative/agent"
 	"time"
 )
 
@@ -78,7 +78,7 @@ func (c *caseOfficer) Run() {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, assignment1.Entries, agent1.New)
+	go emissaryAttend(c, assignment1.Entries, agent.New)
 }
 
 // Shutdown - shutdown the agent
