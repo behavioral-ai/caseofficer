@@ -8,20 +8,11 @@ import (
 
 type createAgent func(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent
 
-/*
-func newFeedbackAgent(origin core.Origin, handler messaging.OpsAgent, global messaging.Dispatcher) messaging.Agent {
-	return feedback.NewAgent(origin, handler, global)
-}
-*/
-//type newServiceAgent func(origin core.Origin, handler messaging.OpsAgent, dispatcher messaging.Dispatcher) messaging.Agent
-//type newFeedbackAgent func(origin core.Origin, handler messaging.OpsAgent, dispatcher messaging.Dispatcher) messaging.Agent
-
 func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, newService createAgent) {
 	paused := false
 	createAssignments(agent, assignments, newService)
-	//addFeedback(agent, newFeedback)
 	agent.startup()
-	//agent.dispatch(messaging.StartupEvent)
+	agent.dispatch(agent.emissary, messaging.StartupEvent)
 
 	for {
 		select {
