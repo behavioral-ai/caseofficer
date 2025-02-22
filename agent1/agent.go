@@ -31,8 +31,8 @@ func AgentUri(origin common.Origin) string {
 	return fmt.Sprintf("%v%v#%v", Name, strconv.Itoa(version), origin)
 }
 
-// NewAgent - create a new case officer agent
-func NewAgent(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent {
+// New - create a new case officer agent
+func New(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent {
 	return newAgent(origin, notifier, dispatcher)
 }
 
@@ -88,23 +88,11 @@ func (c *caseOfficer) Shutdown() {
 }
 
 func (c *caseOfficer) notify(status *messaging.Status) *messaging.Status {
-	if c.notifier != nil {
-		c.notifier(status)
-	}
-	return status
+	return messaging.Notify(c.notifier, status)
 }
 
 func (c *caseOfficer) dispatch(channel any, event string) {
-	if c.dispatcher == nil || channel == nil {
-		return
-	}
-	if ch, ok := channel.(*messaging.Channel); ok {
-		c.dispatcher.Dispatch(c, ch.Name(), event)
-		return
-	}
-	if t, ok := channel.(*messaging.Ticker); ok {
-		c.dispatcher.Dispatch(c, t.Name(), event)
-	}
+	messaging.Dispatch(c, c.dispatcher, channel, event)
 }
 
 func (c *caseOfficer) startup() {
