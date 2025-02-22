@@ -9,7 +9,7 @@ import (
 
 func createAssignments(agent *caseOfficer, assignments *assignment1.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
+		agent.notify(messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil")))
 		return
 	}
 	entry, status := assignments.All(agent.origin)
@@ -17,13 +17,13 @@ func createAssignments(agent *caseOfficer, assignments *assignment1.Assignments,
 		addAssignments(agent, entry, newAgent)
 	}
 	//if !status.NotFound() {
-	agent.Notify(status)
+	agent.notify(status)
 	//}
 }
 
 func updateAssignments(agent *caseOfficer, assignments *assignment1.Assignments, newAgent createAgent) {
 	if newAgent == nil {
-		agent.Notify(messaging.NewStatusError(http.StatusBadRequest, errors.New("error: update assignments newAgent is nil")))
+		agent.notify(messaging.NewStatusError(http.StatusBadRequest, errors.New("error: update assignments newAgent is nil")))
 		return
 	}
 	entry, status := assignments.New(agent.origin)
@@ -31,16 +31,16 @@ func updateAssignments(agent *caseOfficer, assignments *assignment1.Assignments,
 		addAssignments(agent, entry, newAgent)
 	}
 	//	if !status.NotFound() {
-	agent.Notify(status)
+	agent.notify(status)
 	//	}
 }
 
-func addAssignments(agent *caseOfficer, entry []assignment1.HostEntry, newAgent createAgent) {
+func addAssignments(agent *caseOfficer, entry []assignment1.Entry, newAgent createAgent) {
 	for _, e := range entry {
 		a := newAgent(e.Origin, agent.notifier, agent.dispatcher)
 		err := agent.serviceAgents.Register(a)
 		if err != nil {
-			agent.Notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err))
+			agent.notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err))
 		} else {
 			a.Run()
 		}

@@ -1,32 +1,34 @@
 package agent1
 
 import (
+	"fmt"
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/operative/agent"
+	"strconv"
 	"time"
 )
 
 const (
-	Class              = "case-officer"
+	Name               = "resiliency:agent/caseofficer/agent"
 	assignmentDuration = time.Second * 15
 )
 
 type caseOfficer struct {
-	running bool
-	uri     string
-	origin  common.Origin
-
-	ticker        *messaging.Ticker
-	emissary      *messaging.Channel
+	running       bool
+	uri           string
+	origin        common.Origin
 	serviceAgents *messaging.Exchange
-	notifier      messaging.NotifyFunc
-	dispatcher    messaging.Dispatcher
+
+	ticker     *messaging.Ticker
+	emissary   *messaging.Channel
+	notifier   messaging.NotifyFunc
+	dispatcher messaging.Dispatcher
 }
 
 func AgentUri(origin common.Origin) string {
-	return origin.Uri(Class)
+	return fmt.Sprintf("%v%v#%v", Name, strconv.Itoa(version), origin)
 }
 
 // NewAgent - create a new case officer agent
@@ -39,11 +41,11 @@ func newAgent(origin common.Origin, notifier messaging.NotifyFunc, dispatcher me
 	c := new(caseOfficer)
 	c.uri = AgentUri(origin)
 	c.origin = origin
+	c.serviceAgents = messaging.NewExchange()
+
 	c.ticker = messaging.NewPrimaryTicker(assignmentDuration)
 	c.emissary = messaging.NewEmissaryChannel(true)
 	c.notifier = notifier
-	c.serviceAgents = messaging.NewExchange()
-
 	c.dispatcher = dispatcher
 	return c
 }
@@ -55,7 +57,7 @@ func (c *caseOfficer) String() string { return c.Uri() }
 func (c *caseOfficer) Uri() string { return c.uri }
 
 // Name - agent class
-func (c *caseOfficer) Name() string { return c.uri }
+func (c *caseOfficer) Name() string { return Name }
 
 // Message - message the agent
 func (c *caseOfficer) Message(m *messaging.Message) {
@@ -63,13 +65,6 @@ func (c *caseOfficer) Message(m *messaging.Message) {
 		return
 	}
 	c.emissary.C <- m
-}
-
-// Notify - notifier
-func (c *caseOfficer) Notify(status *messaging.Status) {
-	if c.notifier != nil {
-		c.notifier(status)
-	}
 }
 
 // Run - run the agent
@@ -92,22 +87,11 @@ func (c *caseOfficer) Shutdown() {
 	c.emissary.C <- msg
 }
 
-func (c *caseOfficer) IsFinalized() bool {
-	return c.emissary.IsFinalized() && c.ticker.IsFinalized() && c.serviceAgents.IsFinalized()
-}
-
-func (c *caseOfficer) startup() {
-	c.ticker.Start(-1)
-}
-
-func (c *caseOfficer) finalize() {
-	c.emissary.Close()
-	c.ticker.Stop()
-	c.serviceAgents.Shutdown()
-}
-
-func (c *caseOfficer) reviseTicker(newDuration time.Duration) {
-	c.ticker.Start(newDuration)
+func (c *caseOfficer) notify(status *messaging.Status) *messaging.Status {
+	if c.notifier != nil {
+		c.notifier(status)
+	}
+	return status
 }
 
 func (c *caseOfficer) dispatch(channel any, event string) {
@@ -123,24 +107,16 @@ func (c *caseOfficer) dispatch(channel any, event string) {
 	}
 }
 
-/*
-func (c *caseOfficer) dispatch(event string) {
-	if c.global != nil {
-		c.global.Dispatch(c, messaging.EmissaryChannel, event, "")
-	}
-	if c.local != nil {
-		c.local.dispatch(c, event)
-	}
+func (c *caseOfficer) startup() {
+	c.ticker.Start(-1)
 }
 
-*/
-
-/*
-func (c *caseOfficer) setup(event string) {
-	if c.local != nil {
-		c.local.setup(c, event)
-	}
+func (c *caseOfficer) finalize() {
+	c.emissary.Close()
+	c.ticker.Stop()
+	c.serviceAgents.Shutdown()
 }
 
-
-*/
+func (c *caseOfficer) reviseTicker(newDuration time.Duration) {
+	c.ticker.Start(newDuration)
+}
