@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/operative/agent"
 	"strconv"
@@ -46,6 +47,9 @@ func newAgent(origin common.Origin, notifier messaging.NotifyFunc, dispatcher me
 	c.ticker = messaging.NewPrimaryTicker(assignmentDuration)
 	c.emissary = messaging.NewEmissaryChannel(true)
 	c.notifier = notifier
+	if c.notifier == nil {
+		c.notifier = collective.Resolver.Notify
+	}
 	c.dispatcher = dispatcher
 	return c
 }
@@ -82,13 +86,12 @@ func (c *caseOfficer) Shutdown() {
 		return
 	}
 	c.running = false
-	msg := messaging.NewControlMessage(c.Uri(), c.Uri(), messaging.ShutdownEvent)
 	c.serviceAgents.Shutdown()
-	c.emissary.C <- msg
+	c.emissary.C <- messaging.Shutdown
 }
 
-func (c *caseOfficer) notify(status *messaging.Status) *messaging.Status {
-	return messaging.Notify(c.notifier, status)
+func (c *caseOfficer) notify(e messaging.Event) {
+	c.notifier(e)
 }
 
 func (c *caseOfficer) dispatch(channel any, event string) {

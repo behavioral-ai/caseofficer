@@ -9,10 +9,10 @@ import (
 type createAgent func(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent
 
 func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, newService createAgent) {
+	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
 	createAssignments(agent, assignments, newService)
 	agent.startup()
-	agent.dispatch(agent.emissary, messaging.StartupEvent)
 
 	for {
 		select {
