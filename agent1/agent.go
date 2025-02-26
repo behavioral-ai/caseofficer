@@ -21,7 +21,7 @@ type caseOfficer struct {
 	uri     string
 	origin  common.Origin
 
-	handler       messaging.OpsAgent
+	handler       messaging.Agent
 	serviceAgents *messaging.Exchange
 	ticker        *messaging.Ticker
 	emissary      *messaging.Channel
@@ -34,12 +34,12 @@ func AgentUri(origin common.Origin) string {
 }
 
 // New - create a new case officer agent
-func New(handler messaging.OpsAgent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.OpsAgent {
+func New(handler messaging.Agent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.Agent {
 	return newAgent(handler, origin, nil, dispatcher)
 }
 
 // newAgent - create a new case officer agent
-func newAgent(handler messaging.OpsAgent, origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
+func newAgent(handler messaging.Agent, origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
 	c := new(caseOfficer)
 	c.uri = AgentUri(origin)
 	c.origin = origin
@@ -87,14 +87,6 @@ func (c *caseOfficer) Shutdown() {
 	if !c.emissary.IsClosed() {
 		c.emissary.C <- messaging.Shutdown
 	}
-}
-
-// Host - operations agent
-func (c *caseOfficer) Host() string {
-	if c.handler != nil {
-		return c.handler.Host()
-	}
-	return ""
 }
 
 func (c *caseOfficer) notify(e messaging.Event) {
