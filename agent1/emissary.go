@@ -17,14 +17,15 @@ func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, ne
 	for {
 		select {
 		case <-agent.ticker.C():
+			agent.dispatch(agent.ticker, messaging.TickEvent)
 			if !paused {
 				updateAssignments(agent, assignments, newService)
-				agent.dispatch(agent.ticker, messaging.TickEvent)
 			}
 		default:
 		}
 		select {
 		case msg := <-agent.emissary.C:
+			agent.dispatch(agent.emissary, msg.Event())
 			switch msg.Event() {
 			case messaging.PauseEvent:
 				paused = true
@@ -32,12 +33,10 @@ func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, ne
 				paused = false
 			case messaging.ShutdownEvent:
 				agent.finalize()
-				agent.dispatch(agent.emissary, msg.Event())
 				return
 			case messaging.DataChangeEvent:
 			default:
 			}
-			agent.dispatch(agent.emissary, msg.Event())
 		default:
 		}
 	}

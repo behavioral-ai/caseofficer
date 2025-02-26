@@ -6,6 +6,6 @@ import (
 	"github.com/behavioral-ai/domain/common"
 )
 
-func New(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent {
-	return agent1.New(origin, notifier, dispatcher)
+func New(handler messaging.OpsAgent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.Agent {
+	return agent1.New(handler, origin, dispatcher)
 }

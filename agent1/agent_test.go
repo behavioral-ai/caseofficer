@@ -3,12 +3,11 @@ package agent1
 import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/test"
 	"github.com/behavioral-ai/domain/common"
 )
 
 func ExampleNewAgent() {
-	a := New(common.Origin{}, test.Notify, messaging.NewTraceDispatcher())
+	a := New(nil, common.Origin{Region: "us-central"}, messaging.Notify, messaging.NewTraceDispatcher())
 	fmt.Printf("test: NewAgent() -> [%v] [%v]\n", a.Uri(), a.Name())
 
 	//Output:

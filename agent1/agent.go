@@ -12,20 +12,21 @@ import (
 )
 
 const (
-	Name               = "resiliency:agent/caseofficer/agent"
-	assignmentDuration = time.Second * 15
+	Name            = "resiliency:agent/caseofficer"
+	defaultDuration = time.Second * 15
 )
 
 type caseOfficer struct {
-	running       bool
-	uri           string
-	origin        common.Origin
-	serviceAgents *messaging.Exchange
+	running bool
+	uri     string
+	origin  common.Origin
 
-	ticker     *messaging.Ticker
-	emissary   *messaging.Channel
-	notifier   messaging.NotifyFunc
-	dispatcher messaging.Dispatcher
+	handler       messaging.OpsAgent
+	serviceAgents *messaging.Exchange
+	ticker        *messaging.Ticker
+	emissary      *messaging.Channel
+	notifier      messaging.NotifyFunc
+	dispatcher    messaging.Dispatcher
 }
 
 func AgentUri(origin common.Origin) string {
@@ -33,19 +34,20 @@ func AgentUri(origin common.Origin) string {
 }
 
 // New - create a new case officer agent
-func New(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent {
-	return newAgent(origin, notifier, dispatcher)
+func New(handler messaging.OpsAgent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.OpsAgent {
+	return newAgent(handler, origin, nil, dispatcher)
 }
 
 // newAgent - create a new case officer agent
-func newAgent(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
+func newAgent(handler messaging.OpsAgent, origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
 	c := new(caseOfficer)
 	c.uri = AgentUri(origin)
 	c.origin = origin
+	c.handler = handler
 	c.serviceAgents = messaging.NewExchange()
 
-	c.ticker = messaging.NewPrimaryTicker(assignmentDuration)
-	c.emissary = messaging.NewEmissaryChannel(true)
+	c.ticker = messaging.NewPrimaryTicker(defaultDuration)
+	c.emissary = messaging.NewEmissaryChannel()
 	c.notifier = notifier
 	if c.notifier == nil {
 		c.notifier = collective.Resolver.Notify
@@ -82,12 +84,17 @@ func (c *caseOfficer) Run() {
 
 // Shutdown - shutdown the agent
 func (c *caseOfficer) Shutdown() {
-	if !c.running {
-		return
+	if !c.emissary.IsClosed() {
+		c.emissary.C <- messaging.Shutdown
 	}
-	c.running = false
-	c.serviceAgents.Shutdown()
-	c.emissary.C <- messaging.Shutdown
+}
+
+// Host - operations agent
+func (c *caseOfficer) Host() string {
+	if c.handler != nil {
+		return c.handler.Host()
+	}
+	return ""
 }
 
 func (c *caseOfficer) notify(e messaging.Event) {
