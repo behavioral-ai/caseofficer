@@ -6,7 +6,7 @@ import (
 	"github.com/behavioral-ai/domain/common"
 )
 
-type createAgent func(origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent
+type createAgent func(handler messaging.Agent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.Agent
 
 func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, newService createAgent) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
@@ -29,12 +29,13 @@ func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, ne
 			switch msg.Event() {
 			case messaging.PauseEvent:
 				paused = true
+				agent.serviceAgents.Broadcast(messaging.Pause)
 			case messaging.ResumeEvent:
 				paused = false
+				agent.serviceAgents.Broadcast(messaging.Resume)
 			case messaging.ShutdownEvent:
 				agent.finalize()
 				return
-			case messaging.DataChangeEvent:
 			default:
 			}
 		default:

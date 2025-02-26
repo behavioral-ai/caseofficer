@@ -3,7 +3,6 @@ package agent1
 import (
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/test"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/operative/agent"
 	"time"
@@ -17,7 +16,7 @@ var (
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	traceDispatch := messaging.NewTraceDispatcher()
-	officer := newAgent(common.Origin{Region: common.WestRegion}, test.Notify, traceDispatch)
+	officer := newAgent(nil, common.Origin{Region: common.WestRegion}, messaging.Notify, traceDispatch)
 	//dataChange.SetContent(guidance.ContentTypeCalendar, guidance.NewProcessingCalendar())
 
 	go func() {

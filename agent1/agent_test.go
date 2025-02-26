@@ -7,7 +7,7 @@ import (
 )
 
 func ExampleNewAgent() {
-	a := New(nil, common.Origin{Region: "us-central"}, messaging.Notify, messaging.NewTraceDispatcher())
+	a := New(nil, common.Origin{Region: "us-central"}, messaging.NewTraceDispatcher())
 	fmt.Printf("test: NewAgent() -> [%v] [%v]\n", a.Uri(), a.Name())
 
 	//Output:
