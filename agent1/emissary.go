@@ -3,15 +3,20 @@ package agent1
 import (
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
+)
+
+const (
+	updateAssignmentEvent = "event:update-assignments"
 )
 
 type createAgent func(handler messaging.Agent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.Agent
 
-func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, newService createAgent) {
+func emissaryAttend(agent *caseOfficer, resolver collective.Resolution, assignments *assignment1.Assignments, newService createAgent) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
-	createAssignments(agent, assignments, newService)
+	updateAssignments(agent, resolver, assignments.All, newService)
 	agent.startup()
 
 	for {
@@ -19,7 +24,7 @@ func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, ne
 		case <-agent.ticker.C():
 			agent.dispatch(agent.ticker, messaging.TickEvent)
 			if !paused {
-				updateAssignments(agent, assignments, newService)
+				updateAssignments(agent, resolver, assignments.New, newService)
 			}
 		default:
 		}
@@ -42,3 +47,13 @@ func emissaryAttend(agent *caseOfficer, assignments *assignment1.Assignments, ne
 		}
 	}
 }
+
+/*
+func
+
+if agent == nil || newAgent == nil || assignments == nil || resolver == nil {
+		agent.notify(messaging.NewStatusError(http.StatusBadRequest, errors.New("error: update assignments newAgent, query, or resolver is nil"), agent.Uri()))
+		return
+	}
+
+*/

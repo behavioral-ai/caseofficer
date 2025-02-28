@@ -11,6 +11,6 @@ func ExampleNewAgent() {
 	fmt.Printf("test: NewAgent() -> [%v] [%v]\n", a.Uri(), a.Name())
 
 	//Output:
-	//test: NewAgent() -> [resiliency:agent/caseofficer/agent1#] [resiliency:agent/caseofficer/agent]
+	//test: NewAgent() -> [resiliency:agent/caseofficer1#us-central] [resiliency:agent/caseofficer]
 
 }

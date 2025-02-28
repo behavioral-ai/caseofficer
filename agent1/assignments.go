@@ -1,38 +1,22 @@
 package agent1
 
 import (
-	"errors"
+	"fmt"
 	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
-	"net/http"
+	"github.com/behavioral-ai/domain/collective"
 )
 
-func createAssignments(agent *caseOfficer, assignments *assignment1.Assignments, newAgent createAgent) {
-	if newAgent == nil {
-		agent.notify(messaging.NewStatusError(messaging.StatusInvalidArgument, errors.New("error: create assignments newAgent is nil"), agent.Uri()))
-		return
-	}
-	entry, status := assignments.All(agent.origin)
-	if status == nil {
-		addAssignments(agent, entry, newAgent)
-	}
-	//if !status.NotFound() {
-	agent.notify(status)
-	//}
-}
-
-func updateAssignments(agent *caseOfficer, assignments *assignment1.Assignments, newAgent createAgent) {
-	if newAgent == nil {
-		agent.notify(messaging.NewStatusError(http.StatusBadRequest, errors.New("error: update assignments newAgent is nil"), agent.Uri()))
-		return
-	}
-	entry, status := assignments.New(agent.origin)
+func updateAssignments(agent *caseOfficer, resolver collective.Resolution, query assignment1.SelectAssignments, newAgent createAgent) {
+	entry, status := query(agent.origin)
 	if !status.OK() {
-		addAssignments(agent, entry, newAgent)
+		if !status.NotFound() {
+			agent.notify(status)
+			return
+		}
 	}
-	//	if !status.NotFound() {
-	agent.notify(status)
-	//	}
+	resolver.AddActivity(agent, updateAssignmentEvent, agent.emissary.Name(), fmt.Sprintf("added %v assignments", len(entry)))
+	addAssignments(agent, entry, newAgent)
 }
 
 func addAssignments(agent *caseOfficer, entry []assignment1.Entry, newAgent createAgent) {

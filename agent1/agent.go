@@ -29,7 +29,7 @@ type caseOfficer struct {
 	dispatcher    messaging.Dispatcher
 }
 
-func AgentUri(origin common.Origin) string {
+func agentUri(origin common.Origin) string {
 	return fmt.Sprintf("%v%v#%v", Name, strconv.Itoa(version), origin)
 }
 
@@ -41,7 +41,7 @@ func New(handler messaging.Agent, origin common.Origin, dispatcher messaging.Dis
 // newAgent - create a new case officer agent
 func newAgent(handler messaging.Agent, origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
 	c := new(caseOfficer)
-	c.uri = AgentUri(origin)
+	c.uri = agentUri(origin)
 	c.origin = origin
 	c.handler = handler
 	c.serviceAgents = messaging.NewExchange()
@@ -79,7 +79,7 @@ func (c *caseOfficer) Run() {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, assignment1.Entries, agent.New)
+	go emissaryAttend(c, collective.NewEphemeralResolver(), assignment1.Entries, agent.New)
 }
 
 // Shutdown - shutdown the agent
@@ -102,8 +102,12 @@ func (c *caseOfficer) startup() {
 }
 
 func (c *caseOfficer) finalize() {
-	c.emissary.Close()
-	c.ticker.Stop()
+	if !c.emissary.IsClosed() {
+		c.emissary.Close()
+	}
+	if !c.ticker.IsStopped() {
+		c.ticker.Stop()
+	}
 	c.serviceAgents.Shutdown()
 }
 

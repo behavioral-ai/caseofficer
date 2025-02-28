@@ -15,6 +15,8 @@ type Entry struct {
 	Origin common.Origin `json:"origin"`
 }
 
+type SelectAssignments func(origin common.Origin) ([]Entry, *messaging.Status)
+
 // Assignments - assignments functions struct
 type Assignments struct {
 	All func(origin common.Origin) ([]Entry, *messaging.Status)
