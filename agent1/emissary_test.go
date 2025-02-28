@@ -19,6 +19,7 @@ func ExampleEmissary() {
 
 	go func() {
 		go emissaryAttend(officer, collective.NewEphemeralResolver(), assignment1.Entries, agent.New)
+		time.Sleep(testDuration)
 		officer.Shutdown()
 		time.Sleep(testDuration)
 		ch <- struct{}{}
@@ -27,6 +28,6 @@ func ExampleEmissary() {
 	close(ch)
 
 	//Output:
-	//test: emissaryAttend() -> [finalized:true]
+	//fail
 
 }

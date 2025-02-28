@@ -47,13 +47,3 @@ func emissaryAttend(agent *caseOfficer, resolver collective.Resolution, assignme
 		}
 	}
 }
-
-/*
-func
-
-if agent == nil || newAgent == nil || assignments == nil || resolver == nil {
-		agent.notify(messaging.NewStatusError(http.StatusBadRequest, errors.New("error: update assignments newAgent, query, or resolver is nil"), agent.Uri()))
-		return
-	}
-
-*/
