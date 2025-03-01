@@ -2,29 +2,28 @@ package agent1
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/domain/collective"
+	"github.com/behavioral-ai/domain/timeseries1"
 )
 
-func updateAssignments(agent *caseOfficer, resolver collective.Resolution, query assignment1.SelectAssignments, newAgent createAgent) {
+func updateAssignments(agent *caseOfficer, query timeseries1.SelectAssignments, newAgent createAgent) {
 	entry, status := query(agent.origin)
 	if !status.OK() {
 		if !status.NotFound() {
-			agent.notify(status)
+			agent.resolver.Notify(status)
 			return
 		}
 	}
-	resolver.AddActivity(agent, updateAssignmentEvent, agent.emissary.Name(), fmt.Sprintf("added %v assignments", len(entry)))
+	agent.resolver.AddActivity(agent, updateAssignmentEvent, agent.emissary.Name(), fmt.Sprintf("added %v assignments", len(entry)))
 	addAssignments(agent, entry, newAgent)
 }
 
-func addAssignments(agent *caseOfficer, entry []assignment1.Entry, newAgent createAgent) {
+func addAssignments(agent *caseOfficer, entry []timeseries1.Assignment, newAgent createAgent) {
 	for _, e := range entry {
-		a := newAgent(agent, e.Origin, agent.dispatcher)
+		a := newAgent(e.Origin, agent.resolver, agent.dispatcher)
 		err := agent.serviceAgents.Register(a)
 		if err != nil {
-			agent.notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err, agent.Uri()))
+			agent.resolver.Notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err, agent.Uri()))
 		} else {
 			a.Run()
 		}

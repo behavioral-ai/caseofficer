@@ -1,22 +1,22 @@
 package agent1
 
 import (
-	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/domain/timeseries1"
 )
 
 const (
 	updateAssignmentEvent = "event:update-assignments"
 )
 
-type createAgent func(handler messaging.Agent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.Agent
+type createAgent func(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent
 
-func emissaryAttend(agent *caseOfficer, resolver collective.Resolution, assignments *assignment1.Assignments, newService createAgent) {
+func emissaryAttend(agent *caseOfficer, assignments *timeseries1.Assigner, newService createAgent) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
-	updateAssignments(agent, resolver, assignments.All, newService)
+	updateAssignments(agent, assignments.All, newService)
 	agent.startup()
 
 	for {
@@ -24,7 +24,7 @@ func emissaryAttend(agent *caseOfficer, resolver collective.Resolution, assignme
 		case <-agent.ticker.C():
 			agent.dispatch(agent.ticker, messaging.TickEvent)
 			if !paused {
-				updateAssignments(agent, resolver, assignments.New, newService)
+				updateAssignments(agent, assignments.New, newService)
 			}
 		default:
 		}

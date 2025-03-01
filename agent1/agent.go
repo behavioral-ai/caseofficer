@@ -2,10 +2,10 @@ package agent1
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/caseofficer/assignment1"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/domain/timeseries1"
 	"github.com/behavioral-ai/operative/agent"
 	"strconv"
 	"time"
@@ -21,11 +21,10 @@ type caseOfficer struct {
 	uri     string
 	origin  common.Origin
 
-	handler       messaging.Agent
 	serviceAgents *messaging.Exchange
 	ticker        *messaging.Ticker
 	emissary      *messaging.Channel
-	notifier      messaging.NotifyFunc
+	resolver      collective.Resolution
 	dispatcher    messaging.Dispatcher
 }
 
@@ -34,23 +33,24 @@ func agentUri(origin common.Origin) string {
 }
 
 // New - create a new case officer agent
-func New(handler messaging.Agent, origin common.Origin, dispatcher messaging.Dispatcher) messaging.Agent {
-	return newAgent(handler, origin, nil, dispatcher)
+func New(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
+	return newAgent(origin, resolver, dispatcher)
 }
 
 // newAgent - create a new case officer agent
-func newAgent(handler messaging.Agent, origin common.Origin, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *caseOfficer {
+func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) *caseOfficer {
 	c := new(caseOfficer)
 	c.uri = agentUri(origin)
 	c.origin = origin
-	c.handler = handler
+
 	c.serviceAgents = messaging.NewExchange()
 
-	c.ticker = messaging.NewPrimaryTicker(defaultDuration)
+	c.ticker = messaging.NewTicker(messaging.Emissary, defaultDuration)
 	c.emissary = messaging.NewEmissaryChannel()
-	c.notifier = notifier
-	if c.notifier == nil {
-		c.notifier = collective.Resolver.Notify
+	if resolver == nil {
+		c.resolver = collective.Resolver
+	} else {
+		c.resolver = resolver
 	}
 	c.dispatcher = dispatcher
 	return c
@@ -79,7 +79,7 @@ func (c *caseOfficer) Run() {
 		return
 	}
 	c.running = true
-	go emissaryAttend(c, collective.NewEphemeralResolver(), assignment1.Entries, agent.New)
+	go emissaryAttend(c, timeseries1.Assignments, agent.New)
 }
 
 // Shutdown - shutdown the agent
@@ -87,10 +87,6 @@ func (c *caseOfficer) Shutdown() {
 	if !c.emissary.IsClosed() {
 		c.emissary.C <- messaging.Shutdown
 	}
-}
-
-func (c *caseOfficer) notify(e messaging.Event) {
-	c.notifier(e)
 }
 
 func (c *caseOfficer) dispatch(channel any, event string) {
