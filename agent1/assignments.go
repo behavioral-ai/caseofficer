@@ -14,7 +14,7 @@ func updateAssignments(agent *caseOfficer, query timeseries1.SelectAssignments, 
 			return
 		}
 	}
-	agent.resolver.AddActivity(agent, updateAssignmentEvent, agent.emissary.Name(), fmt.Sprintf("added %v assignments", len(entry)))
+	agent.resolver.AddActivity(agent, updateAssignmentEvent, agent.emissary.Name(), fmt.Sprintf("added %v assignments from %v", len(entry), agent.origin))
 	addAssignments(agent, entry, newAgent)
 }
 
