@@ -13,7 +13,7 @@ const (
 
 type createAgent func(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent
 
-func emissaryAttend(agent *caseOfficer, assignments *timeseries1.Assigner, newService createAgent) {
+func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService createAgent) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
 	updateAssignments(agent, assignments.All, newService)
@@ -26,6 +26,7 @@ func emissaryAttend(agent *caseOfficer, assignments *timeseries1.Assigner, newSe
 			if !paused {
 				updateAssignments(agent, assignments.New, newService)
 			}
+
 		default:
 		}
 		select {

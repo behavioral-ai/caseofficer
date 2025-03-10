@@ -6,7 +6,7 @@ import (
 	"github.com/behavioral-ai/domain/timeseries1"
 )
 
-func updateAssignments(agent *caseOfficer, query timeseries1.SelectAssignments, newAgent createAgent) {
+func updateAssignments(agent *agentT, query timeseries1.SelectAssignments, newAgent createAgent) {
 	entry, status := query(agent.origin)
 	if !status.OK() {
 		if !status.NotFound() {
@@ -18,7 +18,7 @@ func updateAssignments(agent *caseOfficer, query timeseries1.SelectAssignments, 
 	addAssignments(agent, entry, newAgent)
 }
 
-func addAssignments(agent *caseOfficer, entry []timeseries1.Assignment, newAgent createAgent) {
+func addAssignments(agent *agentT, entry []timeseries1.Assignment, newAgent createAgent) {
 	for _, e := range entry {
 		a := newAgent(e.Origin, agent.resolver, agent.dispatcher)
 		err := agent.serviceAgents.Register(a)

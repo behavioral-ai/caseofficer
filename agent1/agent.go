@@ -12,14 +12,16 @@ import (
 )
 
 const (
-	Name            = "resiliency:agent/caseofficer"
-	defaultDuration = time.Second * 15
+	Name        = "resiliency:agent/caseofficer"
+	minDuration = time.Second * 5
+	maxDuration = time.Second * 10
 )
 
-type caseOfficer struct {
-	running bool
-	uri     string
-	origin  common.Origin
+type agentT struct {
+	running  bool
+	uri      string
+	origin   common.Origin
+	duration time.Duration
 
 	serviceAgents *messaging.Exchange
 	ticker        *messaging.Ticker
@@ -38,14 +40,15 @@ func New(origin common.Origin, resolver collective.Resolution, dispatcher messag
 }
 
 // newAgent - create a new case officer agent
-func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) *caseOfficer {
-	c := new(caseOfficer)
+func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) *agentT {
+	c := new(agentT)
 	c.uri = agentUri(origin)
 	c.origin = origin
 
 	c.serviceAgents = messaging.NewExchange()
 
-	c.ticker = messaging.NewTicker(messaging.Emissary, defaultDuration)
+	c.duration = minDuration
+	c.ticker = messaging.NewTicker(messaging.Emissary, c.duration)
 	c.emissary = messaging.NewEmissaryChannel()
 	if resolver == nil {
 		c.resolver = collective.Resolver
@@ -57,56 +60,56 @@ func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher m
 }
 
 // String - identity
-func (c *caseOfficer) String() string { return c.Uri() }
+func (a *agentT) String() string { return a.Uri() }
 
 // Uri - agent identifier
-func (c *caseOfficer) Uri() string { return c.uri }
+func (a *agentT) Uri() string { return a.uri }
 
 // Name - agent class
-func (c *caseOfficer) Name() string { return Name }
+func (a *agentT) Name() string { return Name }
 
 // Message - message the agent
-func (c *caseOfficer) Message(m *messaging.Message) {
+func (a *agentT) Message(m *messaging.Message) {
 	if m == nil {
 		return
 	}
-	c.emissary.C <- m
+	a.emissary.C <- m
 }
 
 // Run - run the agent
-func (c *caseOfficer) Run() {
-	if c.running {
+func (a *agentT) Run() {
+	if a.running {
 		return
 	}
-	c.running = true
-	go emissaryAttend(c, timeseries1.Assignments, agent.New)
+	a.running = true
+	go emissaryAttend(a, timeseries1.Assignments, agent.New)
 }
 
 // Shutdown - shutdown the agent
-func (c *caseOfficer) Shutdown() {
-	if !c.emissary.IsClosed() {
-		c.emissary.C <- messaging.Shutdown
+func (a *agentT) Shutdown() {
+	if !a.emissary.IsClosed() {
+		a.emissary.C <- messaging.Shutdown
 	}
 }
 
-func (c *caseOfficer) dispatch(channel any, event string) {
-	messaging.Dispatch(c, c.dispatcher, channel, event)
+func (a *agentT) dispatch(channel any, event string) {
+	messaging.Dispatch(a, a.dispatcher, channel, event)
 }
 
-func (c *caseOfficer) startup() {
-	c.ticker.Start(-1)
+func (a *agentT) startup() {
+	a.ticker.Start(-1)
 }
 
-func (c *caseOfficer) finalize() {
-	if !c.emissary.IsClosed() {
-		c.emissary.Close()
+func (a *agentT) finalize() {
+	if !a.emissary.IsClosed() {
+		a.emissary.Close()
 	}
-	if !c.ticker.IsStopped() {
-		c.ticker.Stop()
+	if !a.ticker.IsStopped() {
+		a.ticker.Stop()
 	}
-	c.serviceAgents.Shutdown()
+	a.serviceAgents.Shutdown()
 }
 
-func (c *caseOfficer) reviseTicker(newDuration time.Duration) {
-	c.ticker.Start(newDuration)
+func (a *agentT) reviseTicker(newDuration time.Duration) {
+	a.ticker.Start(newDuration)
 }
