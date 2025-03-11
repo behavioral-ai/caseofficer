@@ -2,10 +2,10 @@ package agent1
 
 import (
 	"github.com/behavioral-ai/core/messaging"
+	"github.com/behavioral-ai/core/test"
 	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/timeseries1"
-	"github.com/behavioral-ai/operative/agent"
 	"time"
 )
 
@@ -13,15 +13,19 @@ const (
 	testDuration = time.Second * 5
 )
 
+func operativeNew(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
+	return test.NewAgent("resiliency:agent/operative")
+}
+
 func ExampleEmissary() {
 	ch := make(chan struct{})
 	dispatcher := messaging.NewFilteredTraceDispatcher([]string{messaging.StartupEvent, messaging.ShutdownEvent}, "")
-	officer := newAgent(common.Origin{Region: common.WestRegion}, collective.NewEphemeralResolver(), dispatcher)
+	agent := newAgent(common.Origin{Region: common.WestRegion}, collective.NewEphemeralResolver(), dispatcher)
 
 	go func() {
-		go emissaryAttend(officer, timeseries1.Assignments, agent.New, testDuration)
+		go emissaryAttend(agent, timeseries1.Assignments, operativeNew, testDuration)
 		time.Sleep(testDuration * 3)
-		officer.Shutdown()
+		agent.Shutdown()
 		time.Sleep(testDuration * 2)
 		ch <- struct{}{}
 	}()

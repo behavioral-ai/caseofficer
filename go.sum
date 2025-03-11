@@ -10,6 +10,8 @@ github.com/behavioral-ai/domain v0.0.0-20250310183814-fd2a10f260fc h1:gOz67dGThu
 github.com/behavioral-ai/domain v0.0.0-20250310183814-fd2a10f260fc/go.mod h1:2WL4Myuhx9JlOFp5BN3iLlnBHNTlg9F8+PJqvTiJLds=
 github.com/behavioral-ai/domain v0.0.0-20250310200353-262b2417bcda h1:8IgWp953x+DuduipFj5bKQXiaWxlkPjV80iQiBsyheo=
 github.com/behavioral-ai/domain v0.0.0-20250310200353-262b2417bcda/go.mod h1:2WL4Myuhx9JlOFp5BN3iLlnBHNTlg9F8+PJqvTiJLds=
+github.com/behavioral-ai/domain v0.0.0-20250311122304-6c7f3d637758 h1:eFuRkfS4HK/RsOTWQRhsEzKgc7GfEnCCwMSs93WdvXU=
+github.com/behavioral-ai/domain v0.0.0-20250311122304-6c7f3d637758/go.mod h1:2WL4Myuhx9JlOFp5BN3iLlnBHNTlg9F8+PJqvTiJLds=
 github.com/behavioral-ai/operative v0.0.0-20250301121315-379da012bc80 h1:kVZqer2cCwmi03Qg8BwsRX5XTpLAMPc1xLrt4KHMo+4=
 github.com/behavioral-ai/operative v0.0.0-20250301121315-379da012bc80/go.mod h1:BDp7gtg8RxjZJTdk4K4d9Xz67KxKKLbRpj9qijfIn1g=
 github.com/behavioral-ai/operative v0.0.0-20250301134840-3e79df3ab743 h1:gU9l+GV0YumG6kHtrlFmaDJ2O+z3O0jUk0N/JlSHp0w=
@@ -22,5 +24,7 @@ github.com/behavioral-ai/operative v0.0.0-20250301190502-f0bc6206c90a h1:wm1Casq
 github.com/behavioral-ai/operative v0.0.0-20250301190502-f0bc6206c90a/go.mod h1:dJpwmcitbW2MzpHqWoEx7/g5Z1WKPIzdu9YqvXkZQPc=
 github.com/behavioral-ai/operative v0.0.0-20250309125243-cc88c37700f5 h1:rwamTvPNEZntHrdtrDrhB5h9JLeQIdkkPB+CKKbcBfU=
 github.com/behavioral-ai/operative v0.0.0-20250309125243-cc88c37700f5/go.mod h1:He/t6nksre0vOM11d4BQUeFUn97xonQeAP7cInLGJVk=
+github.com/behavioral-ai/operative v0.0.0-20250311121945-4a8f393b0bfe h1:TYqzn0wI0SMnxShrPzAvewvmMH0IuXhVhFLSdu6SQXg=
+github.com/behavioral-ai/operative v0.0.0-20250311121945-4a8f393b0bfe/go.mod h1:aW7DdNLYc4XyscKiEHL3Y9aNH24yKyVthyVuj3dPHPE=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=

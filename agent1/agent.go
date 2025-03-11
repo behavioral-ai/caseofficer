@@ -7,7 +7,7 @@ import (
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/metrics1"
 	"github.com/behavioral-ai/domain/timeseries1"
-	"github.com/behavioral-ai/operative/agent"
+	operative "github.com/behavioral-ai/operative/agent"
 	"strconv"
 	"time"
 )
@@ -82,7 +82,7 @@ func (a *agentT) Run() {
 		return
 	}
 	a.running = true
-	go emissaryAttend(a, timeseries1.Assignments, agent.New, 0)
+	go emissaryAttend(a, timeseries1.Assignments, operative.New, 0)
 }
 
 // Shutdown - shutdown the agent
@@ -113,10 +113,10 @@ func (a *agentT) reviseTicker(duration time.Duration) {
 		return
 	}
 	traffic := p.Now()
-	if traffic == metrics1.TrafficMedium || traffic == a.traffic {
+	if p.IsMedium(traffic) || traffic == a.traffic {
 		return
 	}
-	if traffic == metrics1.TrafficLow {
+	if p.IsLow(traffic) {
 		a.ticker.Start(minDuration)
 	} else {
 		a.ticker.Start(maxDuration)
