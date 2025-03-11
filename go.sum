@@ -1,5 +1,9 @@
 github.com/behavioral-ai/core v0.0.0-20250301001909-508ea7699f84 h1:Hlfpbc8JQ/Ubr7WzJj/eCPRutZI/5zfkPPVLxCgkr2E=
 github.com/behavioral-ai/core v0.0.0-20250301001909-508ea7699f84/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250311150719-2adc9d1f9f00 h1:XfQYgeeRHlPq2qYwbCoz4eoF00qXbZDqEFwcSn5D4iM=
+github.com/behavioral-ai/core v0.0.0-20250311150719-2adc9d1f9f00/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
+github.com/behavioral-ai/core v0.0.0-20250311154008-2e3a34f1b7de h1:W2d710KaOI0sIpry84KFcu53hwpUEtPiQrB8nb+EvPM=
+github.com/behavioral-ai/core v0.0.0-20250311154008-2e3a34f1b7de/go.mod h1:sqpbaRPtMXUb4j6CbCuwWvQrD6pUKJm5oZEKPDynlPE=
 github.com/behavioral-ai/domain v0.0.0-20250301002040-4b13ab647b14 h1:eWSrtraxzcl/Xt640qpU4H5BoNq/x+Ga2i0gyFEJ94g=
 github.com/behavioral-ai/domain v0.0.0-20250301002040-4b13ab647b14/go.mod h1:Ugh5gMtPFX7oWvweFStXz+3TUyTkmtGF04I0SyXuZv4=
 github.com/behavioral-ai/domain v0.0.0-20250301172151-1f2e0bbc7d7f h1:9UCKOit1fskGHmoyNte5N54x31gJxbsWvwIAS80nzOU=
@@ -26,5 +30,9 @@ github.com/behavioral-ai/operative v0.0.0-20250309125243-cc88c37700f5 h1:rwamTvP
 github.com/behavioral-ai/operative v0.0.0-20250309125243-cc88c37700f5/go.mod h1:He/t6nksre0vOM11d4BQUeFUn97xonQeAP7cInLGJVk=
 github.com/behavioral-ai/operative v0.0.0-20250311121945-4a8f393b0bfe h1:TYqzn0wI0SMnxShrPzAvewvmMH0IuXhVhFLSdu6SQXg=
 github.com/behavioral-ai/operative v0.0.0-20250311121945-4a8f393b0bfe/go.mod h1:aW7DdNLYc4XyscKiEHL3Y9aNH24yKyVthyVuj3dPHPE=
+github.com/behavioral-ai/operative v0.0.0-20250311125635-05212356a1bc h1:PQsyKtZghg63yFRMDypylUkeZTo1dOSRJdEOGSYzVD0=
+github.com/behavioral-ai/operative v0.0.0-20250311125635-05212356a1bc/go.mod h1:FvZzt7MpwSZ11AZMBLt8S8vvpcuK3Bk/Xrv/clw1bcI=
+github.com/behavioral-ai/operative v0.0.0-20250311164701-8961d1bca5a5 h1:4CQMtJ8ZBzMMqRFaIuOTrhVSBeSUS33Ybjyb5+6E3Gw=
+github.com/behavioral-ai/operative v0.0.0-20250311164701-8961d1bca5a5/go.mod h1:ZtFudVfXpAxuanopmkd5VhR5L5XIij/cQ6f4xkVOyVY=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=

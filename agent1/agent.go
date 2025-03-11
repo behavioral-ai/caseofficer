@@ -8,6 +8,7 @@ import (
 	"github.com/behavioral-ai/domain/metrics1"
 	"github.com/behavioral-ai/domain/timeseries1"
 	operative "github.com/behavioral-ai/operative/agent"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -82,7 +83,7 @@ func (a *agentT) Run() {
 		return
 	}
 	a.running = true
-	go emissaryAttend(a, timeseries1.Assignments, operative.New, 0)
+	go emissaryAttend(a, timeseries1.Assignments, operative.New, nil)
 }
 
 // Shutdown - shutdown the agent
@@ -102,13 +103,16 @@ func (a *agentT) finalize() {
 	a.serviceAgents.Shutdown()
 }
 
-func (a *agentT) reviseTicker(duration time.Duration) {
-	if duration != 0 {
-		a.ticker.Start(duration)
+func (a *agentT) reviseTicker(s messaging.Spanner) {
+	if s != nil {
+		dur := s.Span()
+		a.ticker.Start(dur)
+		a.resolver.Notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
 		return
 	}
 	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, collective.Resolver)
 	if !status.OK() {
+		a.ticker.Start(maxDuration)
 		a.resolver.Notify(status)
 		return
 	}
@@ -116,12 +120,15 @@ func (a *agentT) reviseTicker(duration time.Duration) {
 	if p.IsMedium(traffic) || traffic == a.traffic {
 		return
 	}
+	var dur time.Duration
 	if p.IsLow(traffic) {
-		a.ticker.Start(minDuration)
+		dur = minDuration
 	} else {
-		a.ticker.Start(maxDuration)
+		dur = maxDuration
 	}
+	a.ticker.Start(dur)
 	a.traffic = traffic
+	a.resolver.Notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
 }
 
 /*

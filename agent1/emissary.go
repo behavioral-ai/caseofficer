@@ -5,7 +5,6 @@ import (
 	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/timeseries1"
-	"time"
 )
 
 const (
@@ -14,11 +13,11 @@ const (
 
 type createAgent func(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent
 
-func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService createAgent, duration time.Duration) {
+func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService createAgent, s messaging.Spanner) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
 	updateAssignments(agent, assignments.All, newService)
-	agent.reviseTicker(duration)
+	agent.reviseTicker(s)
 
 	for {
 		select {
@@ -27,7 +26,7 @@ func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService
 			if !paused {
 				updateAssignments(agent, assignments.New, newService)
 			}
-			agent.reviseTicker(duration)
+			agent.reviseTicker(s)
 		default:
 		}
 		select {
