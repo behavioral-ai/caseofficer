@@ -5,6 +5,7 @@ import (
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/domain/metrics1"
 	"github.com/behavioral-ai/domain/timeseries1"
 	"github.com/behavioral-ai/operative/agent"
 	"strconv"
@@ -18,10 +19,10 @@ const (
 )
 
 type agentT struct {
-	running  bool
-	uri      string
-	origin   common.Origin
-	duration time.Duration
+	running bool
+	uri     string
+	traffic string
+	origin  common.Origin
 
 	serviceAgents *messaging.Exchange
 	ticker        *messaging.Ticker
@@ -47,8 +48,8 @@ func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher m
 
 	c.serviceAgents = messaging.NewExchange()
 
-	c.duration = minDuration
-	c.ticker = messaging.NewTicker(messaging.Emissary, c.duration)
+	c.traffic = metrics1.TrafficLow
+	c.ticker = messaging.NewTicker(messaging.Emissary, minDuration)
 	c.emissary = messaging.NewEmissaryChannel()
 	if resolver == nil {
 		c.resolver = collective.Resolver
@@ -110,6 +111,20 @@ func (a *agentT) finalize() {
 	a.serviceAgents.Shutdown()
 }
 
-func (a *agentT) reviseTicker(newDuration time.Duration) {
-	a.ticker.Start(newDuration)
+func (a *agentT) reviseTicker() {
+	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, collective.Resolver)
+	if !status.OK() {
+		a.resolver.Notify(status)
+		return
+	}
+	traffic := p.Now()
+	if traffic == metrics1.TrafficMedium || traffic == a.traffic {
+		return
+	}
+	if traffic == metrics1.TrafficLow {
+		a.ticker.Start(minDuration)
+	} else {
+		a.ticker.Start(maxDuration)
+	}
+	a.traffic = traffic
 }
