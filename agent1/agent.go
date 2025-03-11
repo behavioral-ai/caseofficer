@@ -42,22 +42,21 @@ func New(origin common.Origin, resolver collective.Resolution, dispatcher messag
 
 // newAgent - create a new case officer agent
 func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) *agentT {
-	c := new(agentT)
-	c.uri = agentUri(origin)
-	c.origin = origin
+	a := new(agentT)
+	a.uri = agentUri(origin)
+	a.origin = origin
 
-	c.serviceAgents = messaging.NewExchange()
+	a.serviceAgents = messaging.NewExchange()
 
-	c.traffic = metrics1.TrafficLow
-	c.ticker = messaging.NewTicker(messaging.Emissary, minDuration)
-	c.emissary = messaging.NewEmissaryChannel()
+	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
+	a.emissary = messaging.NewEmissaryChannel()
 	if resolver == nil {
-		c.resolver = collective.Resolver
+		a.resolver = collective.Resolver
 	} else {
-		c.resolver = resolver
+		a.resolver = resolver
 	}
-	c.dispatcher = dispatcher
-	return c
+	a.dispatcher = dispatcher
+	return a
 }
 
 // String - identity
@@ -97,10 +96,6 @@ func (a *agentT) dispatch(channel any, event string) {
 	messaging.Dispatch(a, a.dispatcher, channel, event)
 }
 
-func (a *agentT) startup() {
-	a.ticker.Start(-1)
-}
-
 func (a *agentT) finalize() {
 	if !a.emissary.IsClosed() {
 		a.emissary.Close()
@@ -128,3 +123,9 @@ func (a *agentT) reviseTicker() {
 	}
 	a.traffic = traffic
 }
+
+/*
+func (a *agentT) startup() {
+	a.ticker.Start(-1)
+}
+*/

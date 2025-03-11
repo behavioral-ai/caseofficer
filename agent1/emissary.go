@@ -17,8 +17,8 @@ func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService
 	agent.dispatch(agent.emissary, messaging.StartupEvent)
 	paused := false
 	updateAssignments(agent, assignments.All, newService)
-	agent.startup()
-
+	agent.reviseTicker()
+	
 	for {
 		select {
 		case <-agent.ticker.C():
