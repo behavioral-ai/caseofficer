@@ -110,7 +110,7 @@ func (a *agentT) reviseTicker(s messaging.Spanner) {
 		a.resolver.Notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
 		return
 	}
-	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, collective.Resolver)
+	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, a.resolver)
 	if !status.OK() {
 		a.ticker.Start(maxDuration)
 		a.resolver.Notify(status)
