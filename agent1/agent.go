@@ -82,7 +82,7 @@ func (a *agentT) Run() {
 		return
 	}
 	a.running = true
-	go emissaryAttend(a, timeseries1.Assignments, agent.New)
+	go emissaryAttend(a, timeseries1.Assignments, agent.New, 0)
 }
 
 // Shutdown - shutdown the agent
@@ -97,16 +97,16 @@ func (a *agentT) dispatch(channel any, event string) {
 }
 
 func (a *agentT) finalize() {
-	if !a.emissary.IsClosed() {
-		a.emissary.Close()
-	}
-	if !a.ticker.IsStopped() {
-		a.ticker.Stop()
-	}
+	a.emissary.Close()
+	a.ticker.Stop()
 	a.serviceAgents.Shutdown()
 }
 
-func (a *agentT) reviseTicker() {
+func (a *agentT) reviseTicker(duration time.Duration) {
+	if duration != 0 {
+		a.ticker.Start(duration)
+		return
+	}
 	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, collective.Resolver)
 	if !status.OK() {
 		a.resolver.Notify(status)

@@ -19,7 +19,7 @@ func ExampleEmissary() {
 	officer := newAgent(common.Origin{Region: common.WestRegion}, collective.NewEphemeralResolver(), dispatcher)
 
 	go func() {
-		go emissaryAttend(officer, timeseries1.Assignments, agent.New)
+		go emissaryAttend(officer, timeseries1.Assignments, agent.New, testDuration)
 		time.Sleep(testDuration * 3)
 		officer.Shutdown()
 		time.Sleep(testDuration * 2)
