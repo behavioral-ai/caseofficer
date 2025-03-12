@@ -8,10 +8,10 @@ import (
 )
 
 func ExampleNewAgent() {
-	a := New(common.Origin{Region: "us-central"}, collective.NewEphemeralResolver(), messaging.NewTraceDispatcher())
+	a := New(common.Origin{Region: common.CentralRegion}, collective.NewEphemeralResolver(), messaging.NewTraceDispatcher())
 	fmt.Printf("test: NewAgent() -> [%v] [%v]\n", a.Uri(), a.Name())
 
 	//Output:
-	//test: NewAgent() -> [resiliency:agent/caseofficer1#us-central] [resiliency:agent/caseofficer]
+	//test: NewAgent() -> [resiliency:agent/caseofficer1#us-central1] [resiliency:agent/caseofficer]
 
 }

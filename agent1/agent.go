@@ -113,6 +113,9 @@ func (a *agentT) reviseTicker(s messaging.Spanner) {
 	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, a.resolver)
 	if !status.OK() {
 		a.ticker.Start(maxDuration)
+		if status.NotFound() {
+			status.SetAgent(a.Uri())
+		}
 		a.resolver.Notify(status)
 		return
 	}
