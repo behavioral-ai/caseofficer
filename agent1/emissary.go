@@ -25,8 +25,8 @@ func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService
 			agent.dispatch(agent.ticker, messaging.TickEvent)
 			if !paused {
 				updateAssignments(agent, assignments.New, newService)
+				agent.reviseTicker(s)
 			}
-			agent.reviseTicker(s)
 		default:
 		}
 		select {
