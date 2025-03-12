@@ -2,8 +2,8 @@ package agent1
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/metrics1"
 	"github.com/behavioral-ai/domain/timeseries1"
@@ -28,7 +28,7 @@ type agentT struct {
 	serviceAgents *messaging.Exchange
 	ticker        *messaging.Ticker
 	emissary      *messaging.Channel
-	resolver      collective.Resolution
+	resolver      content.Resolution
 	dispatcher    messaging.Dispatcher
 }
 
@@ -37,12 +37,12 @@ func agentUri(origin common.Origin) string {
 }
 
 // New - create a new case officer agent
-func New(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
+func New(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
 	return newAgent(origin, resolver, dispatcher)
 }
 
 // newAgent - create a new case officer agent
-func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) *agentT {
+func newAgent(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) *agentT {
 	a := new(agentT)
 	a.uri = agentUri(origin)
 	a.origin = origin
@@ -52,7 +52,7 @@ func newAgent(origin common.Origin, resolver collective.Resolution, dispatcher m
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
 	if resolver == nil {
-		a.resolver = collective.Resolver
+		a.resolver = content.Resolver
 	} else {
 		a.resolver = resolver
 	}
@@ -110,7 +110,7 @@ func (a *agentT) reviseTicker(s messaging.Spanner) {
 		a.resolver.Notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
 		return
 	}
-	p, status := collective.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, a.resolver)
+	p, status := content.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, a.resolver)
 	if !status.OK() {
 		a.ticker.Start(maxDuration)
 		if status.NotFound() {

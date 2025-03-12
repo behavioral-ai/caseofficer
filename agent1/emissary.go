@@ -1,8 +1,8 @@
 package agent1
 
 import (
+	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/timeseries1"
 )
@@ -11,7 +11,7 @@ const (
 	updateAssignmentEvent = "event:update-assignments"
 )
 
-type createAgent func(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent
+type createAgent func(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) messaging.Agent
 
 func emissaryAttend(agent *agentT, assignments *timeseries1.Assigner, newService createAgent, s messaging.Spanner) {
 	agent.dispatch(agent.emissary, messaging.StartupEvent)

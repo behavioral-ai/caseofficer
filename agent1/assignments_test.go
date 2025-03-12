@@ -2,9 +2,9 @@ package agent1
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/test"
-	"github.com/behavioral-ai/domain/collective"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/timeseries1"
 )
@@ -16,13 +16,13 @@ var (
 	}
 )
 
-func testNewAgent(origin common.Origin, resolver collective.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
+func testNewAgent(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
 	return test.NewAgent(agentUri(origin))
 }
 
 func ExampleAddAssignments() {
 	origin := common.Origin{Region: common.CentralRegion}
-	agent := newAgent(origin, collective.NewEphemeralResolver(), nil)
+	agent := newAgent(origin, content.NewEphemeralResolver(), nil)
 	addAssignments(agent, centralData, testNewAgent)
 	fmt.Printf("test: addAssignments() -> [assignments:%v]\n", agent.serviceAgents.Count())
 
@@ -36,7 +36,7 @@ func ExampleAddAssignments() {
 func ExampleUpdateAssignments() {
 	origin := common.Origin{Region: common.WestRegion}
 
-	agent := newAgent(origin, collective.NewEphemeralResolver(), nil)
+	agent := newAgent(origin, content.NewEphemeralResolver(), nil)
 	updateAssignments(agent, timeseries1.Assignments.All, testNewAgent)
 	fmt.Printf("test: updateAssignments() -> [assignments:%v]\n", agent.serviceAgents.Count())
 
