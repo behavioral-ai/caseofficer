@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
-	"github.com/behavioral-ai/core/test"
+	"github.com/behavioral-ai/core/messaging/messagingtest"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/timeseries1"
 )
@@ -17,7 +17,7 @@ var (
 )
 
 func testNewAgent(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
-	return test.NewAgent(agentUri(origin))
+	return messagingtest.NewAgent(agentUri(origin))
 }
 
 func ExampleAddAssignments() {
