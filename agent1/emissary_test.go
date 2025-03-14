@@ -4,7 +4,6 @@ import (
 	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/core/messaging/messagingtest"
-	"github.com/behavioral-ai/core/test"
 	"github.com/behavioral-ai/domain/common"
 	"github.com/behavioral-ai/domain/timeseries1"
 	"time"
@@ -15,7 +14,7 @@ const (
 )
 
 func operativeNew(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
-	return test.NewAgent("resiliency:agent/operative#" + origin.String())
+	return messagingtest.NewAgent("resiliency:agent/operative#" + origin.String())
 }
 
 func ExampleEmissary() {
