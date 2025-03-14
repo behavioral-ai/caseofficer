@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	Name        = "resiliency:agent/caseofficer"
-	minDuration = time.Second * 5
-	maxDuration = time.Second * 10
+	NamespaceName = "resiliency:agent/caseofficer"
+	minDuration   = time.Second * 5
+	maxDuration   = time.Second * 10
 )
 
 type agentT struct {
@@ -33,7 +33,7 @@ type agentT struct {
 }
 
 func agentUri(origin common.Origin) string {
-	return fmt.Sprintf("%v%v#%v", Name, strconv.Itoa(version), origin)
+	return fmt.Sprintf("%v%v#%v", NamespaceName, strconv.Itoa(version), origin)
 }
 
 // New - create a new case officer agent
@@ -67,7 +67,7 @@ func (a *agentT) String() string { return a.Uri() }
 func (a *agentT) Uri() string { return a.uri }
 
 // Name - agent class
-func (a *agentT) Name() string { return Name }
+func (a *agentT) Name() string { return NamespaceName }
 
 // Message - message the agent
 func (a *agentT) Message(m *messaging.Message) {
