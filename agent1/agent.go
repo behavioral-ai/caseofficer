@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	NamespaceName = "resiliency:agent/caseofficer"
+	NamespaceName = "resiliency:agent/behavioral-ai/caseofficer"
 	minDuration   = time.Second * 5
 	maxDuration   = time.Second * 10
 )

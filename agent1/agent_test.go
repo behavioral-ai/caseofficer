@@ -14,7 +14,7 @@ func ExampleNewAgent() {
 	fmt.Printf("test: NewAgent() -> [%v] [%v]\n", a.Uri(), a.Name())
 
 	//Output:
-	//test: NewAgent() -> [resiliency:agent/caseofficer1#us-central1] [resiliency:agent/caseofficer]
+	//test: NewAgent() -> [resiliency:agent/behavioral-ai/caseofficer1#us-central1] [resiliency:agent/caseofficer]
 
 }
 
@@ -26,7 +26,7 @@ func ExampleAgent_Run() {
 	agent := newAgent(common.Origin{Region: common.WestRegion}, r, dispatcher)
 
 	go func() {
-		agent.Run() //go emissaryAttend(agent, timeseries1.Assignments, operativeNew, s)
+		agent.Run()
 		time.Sleep(testDuration * 6)
 		agent.Message(messaging.Pause)
 		time.Sleep(testDuration * 6)
