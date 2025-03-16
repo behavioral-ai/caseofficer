@@ -2,9 +2,9 @@ package agent1
 
 import (
 	"fmt"
-	"github.com/behavioral-ai/collective/content"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
+	"github.com/behavioral-ai/domain/content"
 	"github.com/behavioral-ai/domain/metrics1"
 	"github.com/behavioral-ai/domain/timeseries1"
 	operative "github.com/behavioral-ai/operative/agent"
