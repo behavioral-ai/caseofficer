@@ -111,6 +111,7 @@ func (a *agentT) addActivity(e messaging.ActivityItem) {
 		event.Agent.Message(messaging.NewActivityMessage(e))
 	}
 }
+
 func (a *agentT) dispatch(channel any, event string) {
 	messaging.Dispatch(a, a.dispatcher, channel, event)
 }
