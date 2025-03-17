@@ -10,20 +10,25 @@ func updateAssignments(agent *agentT, query timeseries1.SelectAssignments, newAg
 	entry, status := query(agent.origin)
 	if !status.OK() {
 		if !status.NotFound() {
-			agent.resolver.Notify(status)
+			agent.notify(status)
 			return
 		}
 	}
-	agent.resolver.AddActivity(agent, updateAssignmentEvent, agent.emissary.Name(), fmt.Sprintf("added %v assignments from %v", len(entry), agent.origin))
+	agent.addActivity(messaging.ActivityItem{
+		Agent:   agent,
+		Event:   updateAssignmentEvent,
+		Source:  agent.emissary.Name(),
+		Content: fmt.Sprintf("added %v assignments from %v", len(entry), agent.origin),
+	})
 	addAssignments(agent, entry, newAgent)
 }
 
 func addAssignments(agent *agentT, entry []timeseries1.Assignment, newAgent createAgent) {
 	for _, e := range entry {
-		a := newAgent(e.Origin, agent.resolver, agent.dispatcher)
+		a := newAgent(e.Origin, agent.activity, agent.notifier, agent.dispatcher)
 		err := agent.serviceAgents.Register(a)
 		if err != nil {
-			agent.resolver.Notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err, agent.Uri()))
+			agent.notify(messaging.NewStatusError(messaging.StatusInvalidArgument, err, agent.Uri()))
 		} else {
 			a.Run()
 		}

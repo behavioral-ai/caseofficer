@@ -2,9 +2,10 @@ package agent1
 
 import (
 	"fmt"
+	"github.com/behavioral-ai/collective/content"
+	"github.com/behavioral-ai/collective/event"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/domain/content"
 	"github.com/behavioral-ai/domain/metrics1"
 	"github.com/behavioral-ai/domain/timeseries1"
 	operative "github.com/behavioral-ai/operative/agent"
@@ -28,7 +29,8 @@ type agentT struct {
 	serviceAgents *messaging.Exchange
 	ticker        *messaging.Ticker
 	emissary      *messaging.Channel
-	resolver      content.Resolution
+	notifier      messaging.NotifyFunc
+	activity      messaging.ActivityFunc
 	dispatcher    messaging.Dispatcher
 }
 
@@ -37,12 +39,12 @@ func agentUri(origin common.Origin) string {
 }
 
 // New - create a new case officer agent
-func New(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) messaging.Agent {
-	return newAgent(origin, resolver, dispatcher)
+func New(origin common.Origin, activity messaging.ActivityFunc, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) messaging.Agent {
+	return newAgent(origin, activity, notifier, dispatcher)
 }
 
 // newAgent - create a new case officer agent
-func newAgent(origin common.Origin, resolver content.Resolution, dispatcher messaging.Dispatcher) *agentT {
+func newAgent(origin common.Origin, activity messaging.ActivityFunc, notifier messaging.NotifyFunc, dispatcher messaging.Dispatcher) *agentT {
 	a := new(agentT)
 	a.uri = agentUri(origin)
 	a.origin = origin
@@ -51,11 +53,9 @@ func newAgent(origin common.Origin, resolver content.Resolution, dispatcher mess
 
 	a.ticker = messaging.NewTicker(messaging.Emissary, maxDuration)
 	a.emissary = messaging.NewEmissaryChannel()
-	if resolver == nil {
-		a.resolver = content.Resolver
-	} else {
-		a.resolver = resolver
-	}
+
+	a.activity = activity
+	a.notifier = notifier
 	a.dispatcher = dispatcher
 	return a
 }
@@ -83,7 +83,7 @@ func (a *agentT) Run() {
 		return
 	}
 	a.running = true
-	go emissaryAttend(a, timeseries1.Assignments, operative.New, nil)
+	go emissaryAttend(a, timeseries1.Assignments, content.Resolver, operative.New, nil)
 }
 
 // Shutdown - shutdown the agent
@@ -93,6 +93,24 @@ func (a *agentT) Shutdown() {
 	}
 }
 
+func (a *agentT) notify(e messaging.NotifyItem) {
+	if e == nil {
+		return
+	}
+	if a.notifier != nil {
+		a.notifier(e)
+	} else {
+		event.Agent.Message(messaging.NewNotifyMessage(e))
+	}
+}
+
+func (a *agentT) addActivity(e messaging.ActivityItem) {
+	if a.activity != nil {
+		a.activity(e)
+	} else {
+		event.Agent.Message(messaging.NewActivityMessage(e))
+	}
+}
 func (a *agentT) dispatch(channel any, event string) {
 	messaging.Dispatch(a, a.dispatcher, channel, event)
 }
@@ -103,20 +121,20 @@ func (a *agentT) finalize() {
 	a.serviceAgents.Shutdown()
 }
 
-func (a *agentT) reviseTicker(s messaging.Spanner) {
+func (a *agentT) reviseTicker(resolver *content.Resolution, s messaging.Spanner) {
 	if s != nil {
 		dur := s.Span()
 		a.ticker.Start(dur)
-		a.resolver.Notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
+		a.notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
 		return
 	}
-	p, status := content.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, a.resolver)
+	p, status := content.Resolve[metrics1.TrafficProfile](metrics1.ProfileName, 1, resolver)
 	if !status.OK() {
 		a.ticker.Start(maxDuration)
 		if status.NotFound() {
 			status.SetAgent(a.Uri())
 		}
-		a.resolver.Notify(status)
+		a.notify(status)
 		return
 	}
 	traffic := p.Now()
@@ -131,7 +149,7 @@ func (a *agentT) reviseTicker(s messaging.Spanner) {
 	}
 	a.ticker.Start(dur)
 	a.traffic = traffic
-	a.resolver.Notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
+	a.notify(messaging.NewStatusMessage(http.StatusOK, fmt.Sprintf("revised ticker -> traffic: %v duration: %v", a.traffic, dur), a.uri))
 }
 
 /*

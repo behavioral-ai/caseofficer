@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"github.com/behavioral-ai/core/messaging"
 	"github.com/behavioral-ai/domain/common"
-	"github.com/behavioral-ai/domain/content"
 	"github.com/behavioral-ai/operative/test"
 	"time"
 )
 
 func ExampleNewAgent() {
-	a := New(common.Origin{Region: common.CentralRegion}, content.NewEphemeralResolver(), messaging.NewTraceDispatcher())
+	a := New(common.Origin{Region: common.CentralRegion}, messaging.Activity, messaging.Notify, messaging.NewTraceDispatcher())
 	fmt.Printf("test: NewAgent() -> [%v] [%v]\n", a.Uri(), a.Name())
 
 	//Output:
-	//test: NewAgent() -> [resiliency:agent/behavioral-ai/caseofficer1#us-central1] [resiliency:agent/caseofficer]
+	//test: NewAgent() -> [resiliency:agent/behavioral-ai/caseofficer1#us-central1] [resiliency:agent/behavioral-ai/caseofficer]
 
 }
 
@@ -22,8 +21,8 @@ func ExampleAgent_Run() {
 	ch := make(chan struct{})
 	//s := messagingtest.NewTestSpanner(time.Second*2, testDuration)
 	dispatcher := messaging.NewFilteredTraceDispatcher([]string{messaging.ResumeEvent, messaging.PauseEvent}, "")
-	r, _ := test.NewResiliencyResolver()
-	agent := newAgent(common.Origin{Region: common.WestRegion}, r, dispatcher)
+	test.LoadResiliencyContent()
+	agent := newAgent(common.Origin{Region: common.WestRegion}, messaging.Activity, messaging.Notify, dispatcher)
 
 	go func() {
 		agent.Run()
